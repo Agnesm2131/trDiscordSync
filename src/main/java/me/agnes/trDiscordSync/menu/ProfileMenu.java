@@ -36,7 +36,6 @@ public class ProfileMenu {
         String title = section.title.replace("%player%", target.getName() != null ? target.getName() : "Unknown");
         Inventory inv = Bukkit.createInventory(null, section.size, MessageUtil.color(title));
 
-        // Fill background
         ItemStack fill = createItem(section.fillItem, target);
         if (section.fillItem.slots != null) {
             for (int slot : section.fillItem.slots) {
@@ -45,7 +44,6 @@ public class ProfileMenu {
             }
         }
 
-        // Add items
         section.items.forEach((key, itemConfig) -> {
             ItemStack item = createItem(itemConfig, target);
             if (itemConfig.slot >= 0 && itemConfig.slot < inv.getSize()) {
@@ -77,7 +75,6 @@ public class ProfileMenu {
         long dateMillis = EslestirmeManager.getEslesmeTarihi(uuid);
         String date = dateMillis > 0 ? DATE_FORMAT.format(new Date(dateMillis)) : "ɴᴏɴᴇ";
 
-        // Booster Status Check via JDA
         String boosterStatus = "&cʏᴏᴋ";
         String boosterReward = linked ? "&aʜᴀᴢɪʀ" : "&cᴇsʟᴇsᴍᴇᴍɪs";
 
