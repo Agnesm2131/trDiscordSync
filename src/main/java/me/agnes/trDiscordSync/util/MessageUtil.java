@@ -1,6 +1,6 @@
-package me.agnes.agnesesle.util;
+package me.agnes.trDiscordSync.util;
 
-import me.agnes.agnesesle.AgnesEsle;
+import me.agnes.trDiscordSync.trDiscordSync;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,39 +9,39 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class MessageUtil {
 
     private static final Map<String, FileConfiguration> messagesByLang = new HashMap<>();
-    private static String lang = "tr"; // default dil
+    private static String lang = "en"; // default language
 
-    // Dil dosyalarını yükler, yoksa kaydeder ve log atar
+    // Loads language files, saves if missing, and logs to console
     public static void load() {
-        String[] langs = {"tr", "en", "es", "fr", "de", "zh"};
-        File pluginFolder = AgnesEsle.getInstance().getDataFolder();
+        String[] langs = { "tr", "en", "es", "fr", "de", "zh" };
+        File pluginFolder = trDiscordSync.getInstance().getDataFolder();
 
         for (String l : langs) {
             File file = new File(pluginFolder, "langs/messages_" + l + ".yml");
 
             if (!file.exists()) {
-                AgnesEsle.getInstance().saveResource("langs/messages_" + l + ".yml", false);
-                AgnesEsle.getInstance().getLogger().info("[MessageUtil] " + file.getName() + " kaydedildi.");
+                trDiscordSync.getInstance().saveResource("langs/messages_" + l + ".yml", false);
+                trDiscordSync.getInstance().getLogger().info("[MessageUtil] " + file.getName() + " saved.");
             } else {
-                AgnesEsle.getInstance().getLogger().info("[MessageUtil] " + file.getName() + " zaten mevcut.");
+                trDiscordSync.getInstance().getLogger().info("[MessageUtil] " + file.getName() + " already exists.");
             }
 
             FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
             messagesByLang.put(l, cfg);
-            AgnesEsle.getInstance().getLogger().info("[MessageUtil] " + l + " dili yüklendi, " + cfg.getKeys(false).size() + " mesaj bulundu.");
+            trDiscordSync.getInstance().getLogger()
+                    .info("[MessageUtil] " + l + " language loaded, " + cfg.getKeys(false).size() + " messages found.");
         }
     }
 
-    // Dil değiştirir, yoksa tr kullanır ve log atar
+    // Changes language, falls back to 'en' if not found
     public static void setLang(String newLang) {
         if (newLang == null) {
-            AgnesEsle.getInstance().getLogger().warning("[MessageUtil] setLang null değer aldı, tr kullanılıyor.");
-            lang = "tr";
+            trDiscordSync.getInstance().getLogger().warning("[MessageUtil] setLang received null, using 'en'.");
+            lang = "en";
             return;
         }
 
@@ -49,21 +49,22 @@ public class MessageUtil {
 
         if (messagesByLang.containsKey(newLang)) {
             lang = newLang;
-            AgnesEsle.getInstance().getLogger().info("[MessageUtil] Dil değiştirildi: " + lang);
+            trDiscordSync.getInstance().getLogger().info("[MessageUtil] Language changed to: " + lang);
         } else {
-            AgnesEsle.getInstance().getLogger().warning("[MessageUtil] Dil bulunamadı: " + newLang + ", tr kullanılacak.");
-            lang = "tr";
+            trDiscordSync.getInstance().getLogger()
+                    .warning("[MessageUtil] Language not found: " + newLang + ", falling back to 'en'.");
+            lang = "en";
         }
     }
 
-    // Mevcut dil dosyasını döner, yoksa tr veya boş config döner ve log atar
+    // Returns the current language config, fallback to 'en'
     private static FileConfiguration getMessages() {
         FileConfiguration config = messagesByLang.get(lang);
         if (config == null) {
-            AgnesEsle.getInstance().getLogger().warning("[MessageUtil] " + lang + " dil dosyası bulunamadı!");
-            config = messagesByLang.get("tr");
+            trDiscordSync.getInstance().getLogger().warning("[MessageUtil] " + lang + " language file not found!");
+            config = messagesByLang.get("en");
             if (config == null) {
-                AgnesEsle.getInstance().getLogger().warning("[MessageUtil] Türkçe dil dosyası da bulunamadı!");
+                trDiscordSync.getInstance().getLogger().warning("[MessageUtil] English language file also not found!");
                 return new YamlConfiguration();
             }
         }
@@ -72,19 +73,32 @@ public class MessageUtil {
 
     // Mesajı path'e göre alır, değişkenleri yerleştirir, renklendirir
     public static String getMessage(String path, Map<String, String> vars) {
+        if (path == null || path.isEmpty())
+            return "";
+
         FileConfiguration messages = getMessages();
         String message = messages.getString(path);
 
         if (message == null) {
-            message = "§cMesaj bulunamadı: " + path;
-            AgnesEsle.getInstance().getLogger().warning("[MessageUtil] Mesaj bulunamadı: " + path + " (Dil: " + lang + ")");
-        } else if (vars != null) {
+            // Eğer path değil de doğrudan metin gönderilmişse (örn GUI isimleri) sadece
+            // renklendir
+            message = path;
+        }
+
+        if (vars != null) {
             for (Map.Entry<String, String> entry : vars.entrySet()) {
                 message = message.replace("%" + entry.getKey() + "%", entry.getValue());
             }
         }
 
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return color(message);
+    }
+
+    // Doğrudan renklendirme
+    public static String color(String text) {
+        if (text == null)
+            return "";
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 
     // Varsız getMessage overload
@@ -104,8 +118,10 @@ public class MessageUtil {
         String title = messages.getString(path + ".title");
         String subtitle = messages.getString(path + ".subtitle");
 
-        if (title == null) title = "§cBaşlık Bulunamadı";
-        if (subtitle == null) subtitle = "§7Alt başlık bulunamadı";
+        if (title == null)
+            title = "§cTitle Not Found";
+        if (subtitle == null)
+            subtitle = "§7Subtitle not found";
 
         if (vars != null) {
             for (Map.Entry<String, String> entry : vars.entrySet()) {
@@ -123,12 +139,12 @@ public class MessageUtil {
         sendTitle(p, path, null);
     }
 
-    // Mesaj dosyalarını yeniler
+    // Reloads message files
     public static void yenile() {
         messagesByLang.clear();
         load();
-        AgnesEsle plugin = AgnesEsle.getInstance();
+        trDiscordSync plugin = trDiscordSync.getInstance();
         plugin.reloadConfig();
-        AgnesEsle.getInstance().getLogger().info("[MessageUtil] Mesaj dosyaları yenilendi.");
+        trDiscordSync.getInstance().getLogger().info("[MessageUtil] Message files reloaded.");
     }
 }

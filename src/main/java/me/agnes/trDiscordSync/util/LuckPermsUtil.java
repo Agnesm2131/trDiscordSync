@@ -1,4 +1,4 @@
-package me.agnes.agnesesle.util;
+package me.agnes.trDiscordSync.util;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -26,7 +26,7 @@ public class LuckPermsUtil {
                             return user.getPrimaryGroup();
                         }
                     } catch (Exception e) {
-                        logger.warning("LuckPerms verisi alınırken hata oluştu (UUID: " + uuid + "): " + e.getMessage());
+                        logger.warning("Error fetching LuckPerms data for UUID: " + uuid + ": " + e.getMessage());
                     }
                     return null;
                 });
@@ -36,7 +36,7 @@ public class LuckPermsUtil {
         try {
             return userGroupCache.get(uuid);
         } catch (Exception e) {
-            logger.warning("LuckPerms'ten birincil grup alınamadı: " + uuid);
+            logger.warning("Could not fetch primary group from LuckPerms for: " + uuid);
             logger.warning(e.getMessage());
             return null;
         }

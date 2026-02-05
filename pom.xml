@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.agnes</groupId>
-    <artifactId>AgnHesapEsle</artifactId>
-    <version>1.2.5</version>
-    <name>AgnHesapEsle</name>
-    <description>Discord - Minecraft Hesap Eşleme Sistemi</description>
+    <artifactId>trDiscordSync</artifactId>
+    <version>1.0</version>
+    <name>trDiscordSync</name>
+    <description>Discord - Minecraft Account Linking System</description>
 
     <properties>
         <!-- 1.13.2 Spigot API uyumluluğu için Java 8 geçildi -->
@@ -72,14 +72,6 @@
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Folia API (sadece derleme için) -->
-        <dependency>
-            <groupId>dev.folia</groupId>
-            <artifactId>folia-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

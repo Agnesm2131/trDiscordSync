@@ -1,20 +1,21 @@
-package me.agnes.agnesesle;
+package me.agnes.trDiscordSync;
 
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.PaperCommandManager;
 import com.bentahsin.benthpapimanager.BenthPAPIManager;
 import com.bentahsin.configuration.Configuration;
-import me.agnes.agnesesle.commands.EsleCommandACF;
-import me.agnes.agnesesle.configuration.MainConfig;
-import me.agnes.agnesesle.data.DatabaseManager;
-import me.agnes.agnesesle.discord.DiscordBot;
-import me.agnes.agnesesle.data.EslestirmeManager;
-import me.agnes.agnesesle.listener.PlayerLoginListener;
-import me.agnes.agnesesle.placeholders.PlayerPlaceholders;
-import me.agnes.agnesesle.placeholders.ServerPlaceholders;
-import me.agnes.agnesesle.util.LuckPermsUtil;
-import me.agnes.agnesesle.util.MessageUtil;
-import me.agnes.agnesesle.util.SchedulerUtil;
+import me.agnes.trDiscordSync.commands.EsleCommandACF;
+import me.agnes.trDiscordSync.configuration.MainConfig;
+import me.agnes.trDiscordSync.data.DatabaseManager;
+import me.agnes.trDiscordSync.discord.DiscordBot;
+import me.agnes.trDiscordSync.data.EslestirmeManager;
+import me.agnes.trDiscordSync.listener.PlayerLoginListener;
+import me.agnes.trDiscordSync.placeholders.PlayerPlaceholders;
+import me.agnes.trDiscordSync.placeholders.ServerPlaceholders;
+import me.agnes.trDiscordSync.util.LuckPermsUtil;
+import me.agnes.trDiscordSync.util.MessageUtil;
+import me.agnes.trDiscordSync.configuration.GuiConfig;
+import me.agnes.trDiscordSync.util.SchedulerUtil;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -33,15 +34,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class AgnesEsle extends JavaPlugin {
+public class trDiscordSync extends JavaPlugin {
 
-    private static AgnesEsle instance;
+    private static trDiscordSync instance;
     private Configuration configManager;
     private MainConfig mainConfig;
+    private GuiConfig guiConfig;
     private DiscordBot discordBot;
     private LuckPerms luckPerms;
     private BenthPAPIManager papiMgr;
     private LuckPermsUtil luckPermsUtil;
+    private me.agnes.trDiscordSync.menu.ProfileMenu profileMenu;
 
     private File rewardsDataFile;
     private FileConfiguration rewardsDataConfig;
@@ -52,18 +55,21 @@ public class AgnesEsle extends JavaPlugin {
 
         this.configManager = new Configuration(this);
         this.mainConfig = new MainConfig();
+        this.guiConfig = new GuiConfig();
         this.configManager.init(mainConfig, "config.yml");
+        this.configManager.init(guiConfig, "gui.yml");
 
         DatabaseManager.init();
 
         try {
             this.luckPerms = LuckPermsProvider.get();
-            getLogger().info("[AgnHesapEsle] LuckPerms API başarıyla yüklendi.");
+            getLogger().info("[trDiscordSync] LuckPerms API successfully linked.");
             if (this.luckPerms != null) {
                 this.luckPermsUtil = new LuckPermsUtil(this.luckPerms, getLogger());
             }
         } catch (IllegalStateException e) {
-            getLogger().warning("[AgnHesapEsle] LuckPerms API bulunamadı! Plugin rütbe özellikleri olmadan çalışacak.");
+            getLogger()
+                    .warning("[trDiscordSync] LuckPerms API not found! Rank features will be disabled.");
             getLogger().severe(e.getMessage());
             this.luckPerms = null;
             this.luckPermsUtil = null;
@@ -73,9 +79,9 @@ public class AgnesEsle extends JavaPlugin {
 
         if (token.equals("DISCORD_BOT_TOKEN")) {
             getLogger().severe("---------------------------------------------------");
-            getLogger().severe("HATA: Discord Bot Tokeni girilmemiş!");
-            getLogger().severe("Lütfen config.yml dosyasını düzenleyin ve sunucuyu yeniden başlatın.");
-            getLogger().severe("Plugin devre dışı bırakılıyor...");
+            getLogger().severe("ERROR: Discord Bot Token is not set!");
+            getLogger().severe("Please edit config.yml and restart the server.");
+            getLogger().severe("Disabling plugin...");
             getLogger().severe("---------------------------------------------------");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -113,7 +119,9 @@ public class AgnesEsle extends JavaPlugin {
 
         EslestirmeManager.init();
 
+        this.profileMenu = new me.agnes.trDiscordSync.menu.ProfileMenu(this);
         getServer().getPluginManager().registerEvents(new PlayerLoginListener(discordBot), this);
+        getServer().getPluginManager().registerEvents(new me.agnes.trDiscordSync.listener.MenuListener(this), this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             try {
@@ -124,20 +132,20 @@ public class AgnesEsle extends JavaPlugin {
                         .register(
                                 PlayerPlaceholders.class,
                                 ServerPlaceholders.class);
-                getLogger().info("PlaceholderAPI desteği başarıyla etkinleştirildi.");
+                getLogger().info("PlaceholderAPI support successfully enabled.");
             } catch (Exception e) {
-                getLogger().severe("BenthPAPIManager başlatılırken bir hata oluştu!");
+                getLogger().severe("An error occurred while starting BenthPAPIManager!");
                 getLogger().warning(e.getMessage());
             }
         } else {
-            getLogger().warning("PlaceholderAPI bulunamadı, placeholder'lar yüklenemedi.");
+            getLogger().warning("PlaceholderAPI not found, placeholders could not be loaded.");
         }
 
         createRewardsDataFile();
         createReadmeFile();
-        getLogger().info("Data Dosyaları Yüklendi!");
+        getLogger().info("Data Files Loaded!");
 
-        getLogger().info("[AgnHesapEsle] Plugin başarıyla yüklendi!");
+        getLogger().info("[trDiscordSync] Plugin successfully loaded!");
     }
 
     @Override
@@ -150,10 +158,10 @@ public class AgnesEsle extends JavaPlugin {
         }
         if (discordBot != null)
             discordBot.shutdown();
-        getLogger().info("[AgnHesapEsle] Plugin kapatıldı!");
+        getLogger().info("[trDiscordSync] Plugin disabled!");
     }
 
-    public static AgnesEsle getInstance() {
+    public static trDiscordSync getInstance() {
         return instance;
     }
 
@@ -167,6 +175,14 @@ public class AgnesEsle extends JavaPlugin {
 
     public LuckPermsUtil getLuckPermsUtil() {
         return luckPermsUtil;
+    }
+
+    public GuiConfig getGuiConfig() {
+        return guiConfig;
+    }
+
+    public me.agnes.trDiscordSync.menu.ProfileMenu getProfileMenu() {
+        return profileMenu;
     }
 
     private void createRewardsDataFile() {
@@ -260,12 +276,12 @@ public class AgnesEsle extends JavaPlugin {
     public void odulVer(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {
-            getLogger().info("Ödül veriliyor: " + player.getName());
+            getLogger().info("Delivering reward to: " + player.getName());
             player.sendMessage(MessageUtil.getMessage("reward-message"));
 
             for (String cmd : getMainConfig().rewards) {
                 String command = cmd.replace("%player%", player.getName());
-                getLogger().info("Komut çalıştırılıyor: " + command);
+                getLogger().info("Executing command: " + command);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
         }

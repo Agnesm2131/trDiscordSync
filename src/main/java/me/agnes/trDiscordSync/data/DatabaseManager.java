@@ -1,6 +1,6 @@
-package me.agnes.agnesesle.data;
+package me.agnes.trDiscordSync.data;
 
-import me.agnes.agnesesle.AgnesEsle;
+import me.agnes.trDiscordSync.trDiscordSync;
 
 import java.io.File;
 import java.sql.Connection;
@@ -14,7 +14,7 @@ public class DatabaseManager {
 
     public static void init() {
         try {
-            File dbFile = new File(AgnesEsle.getInstance().getDataFolder(), "data.db");
+            File dbFile = new File(trDiscordSync.getInstance().getDataFolder(), "data.db");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
 
             try (Statement st = connection.createStatement()) {

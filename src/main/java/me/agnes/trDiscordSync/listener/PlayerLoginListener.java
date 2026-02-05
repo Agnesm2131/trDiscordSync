@@ -1,8 +1,8 @@
-package me.agnes.agnesesle.listener;
+package me.agnes.trDiscordSync.listener;
 
-import me.agnes.agnesesle.data.EslestirmeManager;
-import me.agnes.agnesesle.discord.DiscordBot;
-import me.agnes.agnesesle.util.MessageUtil;
+import me.agnes.trDiscordSync.data.EslestirmeManager;
+import me.agnes.trDiscordSync.discord.DiscordBot;
+import me.agnes.trDiscordSync.util.MessageUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;

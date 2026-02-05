@@ -1,4 +1,4 @@
-package me.agnes.agnesesle.configuration;
+package me.agnes.trDiscordSync.configuration;
 
 import com.bentahsin.configuration.annotation.*;
 import java.util.Arrays;

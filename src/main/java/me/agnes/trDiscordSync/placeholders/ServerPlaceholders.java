@@ -1,17 +1,13 @@
-package me.agnes.agnesesle.placeholders;
+package me.agnes.trDiscordSync.placeholders;
 
 import com.bentahsin.benthpapimanager.annotations.Placeholder;
 import com.bentahsin.benthpapimanager.annotations.PlaceholderIdentifier;
-import me.agnes.agnesesle.data.EslestirmeManager;
+import me.agnes.trDiscordSync.data.EslestirmeManager;
 
 @SuppressWarnings("unused")
-@Placeholder(identifier = "agnesesle_server", author = "Agnes & bentahsin", version = "1.2")
+@Placeholder(identifier = "trdiscordsync_server", author = "Agnes & bentahsin", version = "1.2.6")
 public class ServerPlaceholders {
 
-    /**
-     * Sunucudaki toplam hesap eşleşmesi sayısını döndürür.
-     * Kullanım: %agnesesle_server_toplam_eslesme%
-     */
     @PlaceholderIdentifier(identifier = "toplam_eslesme", onError = "0")
     public String getToplamEslesme() {
         return String.valueOf(EslestirmeManager.getTumEslesmeler().size());

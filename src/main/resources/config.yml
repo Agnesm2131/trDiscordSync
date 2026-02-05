@@ -1,95 +1,97 @@
-##################################################
-#                                                #
-#              Account Linking Config            #
-#                                                #
-##################################################
+#################################################################################
+#                                                                               #
+#                   trDiscordSync - Ultimate Integration                        #
+#          Professional Minecraft & Discord Synchronization Tool                #
+#                                                                               #
+#################################################################################
 
-# ==========================================
-# DYNAMIC COMMAND SYSTEM
-# You can add multiple aliases by separating commands with "|".
-# Example: "hesapesle|sync|link"
-# ==========================================
+# [ DYNAMIC COMMAND SYSTEM ]
+# Configure your primary commands and their aliases here.
+# You can use "|" to add multiple aliases (e.g., "link|sync|verify")
 commands:
-  main: "hesapesle|hesapeşle|sync|link" # Main Command
-  subs: # Sub Commands
-    esle: "eşle|esle|link"
-    onayla: "onayla|confirm"
-    iptal: "iptal|cancel"
-    kaldir: "kaldır|kaldir|unlink"
-    ikifa: "2fa|guvenlik"
-    liste: "liste|list"
-    sifirla: "sıfırla|sifirla|reset"
-    odul: "ödül|odul|reward"
-    yenile: "yenile|reload"
+  main: "link|sync|hesapesle|hesapeşle"
+  subs:
+    esle: "link|sync|eşle|esle"           # Generate a linking code
+    onayla: "confirm|verify|onayla"      # Confirm the link in-game
+    iptal: "cancel|stop|iptal"           # Cancel a pending code
+    kaldir: "unlink|remove|kaldır|kaldir" # Remove an existing link
+    ikifa: "2fa|security|güvenlik"       # Manage 2FA settings
+    liste: "list|liste"                  # (Admin) List all links
+    sifirla: "reset|softreset|sifirla"   # (Admin) Reset a player's link
+    odul: "reward|gift|ödül|odul"        # (Admin) Give rewards manually
+    yenile: "reload|refresh|yenile"      # (Admin) Reload configuration
 
-#Bot Settings
+# [ DISCORD BOT AUTHENTICATION ]
+# Your bot token from https://discord.com/developers/applications
+# Ensure all 'Privileged Gateway Intents' are ENABLED on the developer portal.
 token: "DISCORD_BOT_TOKEN"
+
+# Status messages displayed on the bot (Rotation system)
+# {online} placeholder shows current player count
 status-messages:
-  - "ServerName.net"
-  - "Account Linking System"
-  - "{online} Active Players"
+  - "🔥 server.example.com"
+  - "🔗 {online} Players Linked"
+  - "⚡ High Performance Sync"
 
+# [ SERVER IDENTITY ]
+# The unique ID of your Discord Server (Guild)
+guild-id: "YOUR_GUILD_ID"
 
+# [ CHANNEL CONFIGURATION ]
+# IDs of the channels for specific bot activities
+log-channel-id: "log-channel-id"       # Audit logs for all sync actions
+log-system: "true"                    # Enable or disable the log broadcast
 
-#Channels
-log-channel-id: "log-channel-id"
-log-system: "true"
+information-channel-id: "info-id"      # Channel for the auto-linking panel
+information-message: "not_sent"       # Status: 'sent' or 'not_sent' (auto-updated)
 
-# Role ID
-admin-role-id: "admin-role-id"
-verified-role-id: "verified-role-id"
+# [ ROLE MANAGEMENT ]
+# Automatic role assignment based on linking status and permissions
+admin-role-id: "admin-role-id"        # Role allowed to use bot admin commands
+verified-role-id: "verified-role-id"  # Role granted to ALL linked users
 
-
-# Role System
-# Kontrol Edilmesini İstediğiniz Grup İsimlerini Roles Adı Altında Yazınız. (TR)
-# Write the Group Names you want to be checked under the Roles Name. (EN)
+# [ ROLE SYNCHRONIZATION ]
+# Map LuckPerms groups to Discord roles
+# Format: "InGameGroup: DiscordRoleID"
 roles:
-  vip: "" # Role ID
-  vipplus: "" # Role ID
-  mvip: "" # Role ID
-  mvipplus: "" # Rol ID
+  vip: "ROLE_ID_HERE"
+  vipplus: ""
+  mvip: ""
+  mvipplus: ""
 
+# [ BOOSTER REWARD SYSTEM ]
+# Special perks for users who boost your Discord server
+booster-role-id: "booster-role-id"    # Your server's 'Server Booster' role ID
+booster-channel-id: "booster-id"      # Channel for the special Booster Panel
+booster-reward-time: 86400            # Cooldown between rewards (seconds)
+booster-role-time: 86400              # (Redundant, for compatibility)
 
-#Booster System
-booster-role-id: "booster-role-id"
-booster-channel-id: "booster-channel-id"
-booster-reward-time: 86400
-booster-role-time: 86400
-
+# Define multiple reward packages for boosters
 booster-rewards:
-  5TaneElmas:
-    name: "5 Adet Elmas ve Mesaj"
+  PremiumPackage:
+    name: "🚀 Diamond & XP Pack"
     commands:
       - "give %player% diamond 5"
-      - "msg %player% &dTakviye bastığın için teşekkürler!"
-  1000Para:
-    name: "1000 Oyun Parası"
+      - "xp add %player% 500"
+      - "msg %player% &d&lBOOST! &7Thank you for your support!"
+  EconomyPackage:
+    name: "💰 Cash Bonus"
     commands:
-      - "eco give %player% 1000"
+      - "eco give %player% 5000"
 
-
-
-# Information Settings
-information-message: "gönderilmedi" # gönderildi/gönderilmedi
-information-channel-id: "information-channel-id"
-
-# Reward Commands
-
+# [ LINKING REWARDS ]
+# One-time rewards given immediately after successful account linking
 rewards:
-  - "give %player% minecraft:diamond 5"
-  - "say Congratulations %player% linked their account!"
-  - "experience add %player% 100 points"
+  - "give %player% gold_ingot 10"
+  - "say &b%player% &7has successfully linked their Discord account!"
 
-#DailyRewards System
-reward-cooldown: 86400000 # 24 hours (milisaniye cinsinden)
+# [ DAILY REWARDS ]
+# Periodic rewards for maintaining the link
+reward-cooldown: 86400000             # Time between claims (milliseconds)
 daily-rewards:
-  - "give %player% diamond 1"
-  - "xp %player% add 100"
+  - "give %player% iron_ingot 5"
+  - "xp add %player% 100"
 
-#Server Settings
-guild-id: "" # Your Discord Server (Guild) ID
-
-# Language options: tr, en, es, fr, de, zh
-lang: en
-
-config-version: 3
+# [ SYSTEM SETTINGS ]
+lang: en                              # System language: tr, en, es, fr, de, zh
+config-version: 3                     # DO NOT CHANGE THIS VALUE

@@ -1,0 +1,95 @@
+# ################################################################################
+#                                                                               #
+#                   trDiscordSync - Advanced GUI Config                         #
+#            Premium Profile Menu and High-End Interaction System               #
+#                                                                               #
+# ################################################################################
+
+profile-menu:
+  title: "&8» ᴘʀᴏꜰɪʟᴇ: &b%player%"
+  size: 54
+  
+  # Decoration system
+  fill-item:
+    material: GRAY_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+    slots: [0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,49,50,51,52,53]
+
+  items:
+    corner-1:
+      slot: 0
+      material: BLUE_STAINED_GLASS_PANE
+      name: " "
+    corner-2:
+      slot: 8
+      material: BLUE_STAINED_GLASS_PANE
+      name: " "
+    corner-3:
+      slot: 45
+      material: BLUE_STAINED_GLASS_PANE
+      name: " "
+    corner-4:
+      slot: 53
+      material: BLUE_STAINED_GLASS_PANE
+      name: " "
+
+    player-head:
+      slot: 13
+      material: PLAYER_HEAD
+      name: "&b&l%player%"
+      lore:
+        - "&8sʏɴᴄ sʏsᴛᴇᴍ"
+        - ""
+        - "&8┌ &fsᴛᴀᴛᴜs: %status%"
+        - "&8├ &fᴅɪsᴄᴏʀᴅ ıᴅ: &9%discord_id%"
+        - "&8└ &fʟɪɴᴋ ᴅᴀᴛᴇ: &7%date%"
+        - ""
+        - "&bᴛʜɪs sʏsᴛᴇᴍ ʀᴇᴘʀᴇsᴇɴᴛs sᴇʀᴠᴇʀ"
+        - "&bɪɴᴛᴇɢʀᴀᴛɪᴏɴ ᴀɴᴅ sᴇᴄᴜʀɪᴛʏ ʟᴀʏᴇʀs."
+
+    security:
+      slot: 29
+      material: SHIELD
+      name: "&e&lɢᴜᴠᴇɴʟɪᴋ ʏᴏɴᴇᴛɪᴍɪ"
+      lore:
+        - "&8ᴀᴄᴄᴏᴜɴᴛ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ sʏsᴛᴇᴍ"
+        - ""
+        - "&8┌ &72ꜰᴀ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ: %2fa%"
+        - "&8└ &7ʟᴀsᴛ ʀᴇɢɪsᴛᴇʀᴇᴅ ıᴘ: &f%ip%"
+        - ""
+        - "&eᴡʜᴇɴ 2ꜰᴀ ɪs ᴏɴ, ᴅɪsᴄᴏʀᴅ ᴀᴘᴘʀᴏᴠᴀʟ"
+        - "&eɪs ʀᴇǫᴜɪʀᴇᴅ ᴅᴜʀɪɴɢ ɪᴘ ᴄʜᴀɴɢᴇs."
+
+    booster:
+      slot: 31
+      material: NETHER_STAR
+      name: "&d&lʙᴏᴏsᴛᴇʀ sᴛᴀᴛᴜs"
+      lore:
+        - "&8sᴘᴇᴄɪᴀʟ sᴜᴘᴘᴏʀᴛᴇʀ ʟᴇᴠᴇʟ"
+        - ""
+        - "&8┌ &7ʙᴏᴏsᴛᴇʀ ʀᴏʟᴇ: %booster_status%"
+        - "&8└ &7ʀᴇᴡᴀʀᴅ sᴛᴀᴛᴜs: %booster_reward%"
+        - ""
+        - "&dʙᴏᴏsᴛ ᴏᴜʀ ᴅɪsᴄᴏʀᴅ sᴇʀᴠᴇʀ ᴛᴏ"
+        - "&dᴀᴄᴄᴇss ᴇxᴄʟᴜsɪᴠᴇ ʀᴇᴡᴀʀᴅs!"
+
+    info:
+      slot: 33
+      material: BOOK
+      name: "&b&lɪɴᴛᴇɢʀᴀᴛɪᴏɴ ɪɴꜰᴏ"
+      lore:
+        - "&8ʜᴏᴡ ᴅᴏᴇs ɪᴛ ᴡᴏʀᴋ?"
+        - ""
+        - "&7ᴡʜᴇɴ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ɪs ʟɪɴᴋᴇᴅ,"
+        - "&7sᴘᴇᴄɪᴀʟ ʀᴏʟᴇs ᴀɴᴅ ɪɴ-ɢᴀᴍᴇ ʀᴇᴡᴀʀᴅs"
+        - "&7ᴀʀᴇ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ᴀssɪɢɴᴇᴅ."
+        - ""
+        - "&fᴏᴜʀ ᴅɪsᴄᴏʀᴅ: &9ᴅɪsᴄᴏʀᴅ.ɢɢ/sᴇʀᴠᴇʀ"
+
+    close:
+      slot: 49
+      material: BARRIER
+      name: "&c&lᴄʟᴏsᴇ ᴍᴇɴᴜ"
+      lore:
+        - "&7ᴄʟɪᴄᴋ ᴛᴏ ᴇxɪᴛ ᴛʜᴇ ɪɴᴛᴇʀꜰᴀᴄᴇ."

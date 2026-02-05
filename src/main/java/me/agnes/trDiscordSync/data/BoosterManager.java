@@ -1,9 +1,9 @@
-package me.agnes.agnesesle.data;
+package me.agnes.trDiscordSync.data;
 
-import me.agnes.agnesesle.AgnesEsle;
-import me.agnes.agnesesle.configuration.MainConfig;
-import me.agnes.agnesesle.util.MessageUtil;
-import me.agnes.agnesesle.util.SchedulerUtil;
+import me.agnes.trDiscordSync.trDiscordSync;
+import me.agnes.trDiscordSync.configuration.MainConfig;
+import me.agnes.trDiscordSync.util.MessageUtil;
+import me.agnes.trDiscordSync.util.SchedulerUtil;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.bukkit.Bukkit;
@@ -17,7 +17,7 @@ public class BoosterManager {
 
     public static void handleBoosterClaim(ButtonInteractionEvent event) {
         String discordId = event.getUser().getId();
-        MainConfig config = AgnesEsle.getInstance().getMainConfig();
+        MainConfig config = trDiscordSync.getInstance().getMainConfig();
         UUID uuid = EslestirmeManager.getUUIDByDiscordId(discordId);
 
         if (uuid == null) {
@@ -87,7 +87,7 @@ public class BoosterManager {
 
     public static void handleBoosterStatus(ButtonInteractionEvent event) {
         String discordId = event.getUser().getId();
-        MainConfig config = AgnesEsle.getInstance().getMainConfig();
+        MainConfig config = trDiscordSync.getInstance().getMainConfig();
         UUID uuid = EslestirmeManager.getUUIDByDiscordId(discordId);
 
         if (uuid == null) {

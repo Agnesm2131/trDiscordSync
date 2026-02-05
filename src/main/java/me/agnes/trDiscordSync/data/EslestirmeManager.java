@@ -1,9 +1,8 @@
-package me.agnes.agnesesle.data;
+package me.agnes.trDiscordSync.data;
 
-import me.agnes.agnesesle.AgnesEsle;
-import me.agnes.agnesesle.discord.DiscordBot;
-import me.agnes.agnesesle.util.SchedulerUtil;
-import org.bukkit.Bukkit;
+import me.agnes.trDiscordSync.trDiscordSync;
+import me.agnes.trDiscordSync.discord.DiscordBot;
+import me.agnes.trDiscordSync.util.SchedulerUtil;
 
 import java.sql.*;
 import java.util.*;
@@ -12,7 +11,7 @@ import java.util.logging.Logger;
 
 public class EslestirmeManager {
 
-    private static final Logger logger = AgnesEsle.getInstance().getLogger();
+    private static final Logger logger = trDiscordSync.getInstance().getLogger();
 
     private static final Map<String, UUID> kodlar = new ConcurrentHashMap<>();
     private static final Map<UUID, String> eslesmeler = new ConcurrentHashMap<>();
@@ -168,11 +167,11 @@ public class EslestirmeManager {
                 ps.close();
 
                 if (!odulVerildiMi(uuid)) {
-                    SchedulerUtil.runSync(() -> AgnesEsle.getInstance().odulVer(uuid));
+                    SchedulerUtil.runSync(() -> trDiscordSync.getInstance().odulVer(uuid));
                     odulVerildi(uuid);
                 }
 
-                DiscordBot bot = AgnesEsle.getInstance().getDiscordBot();
+                DiscordBot bot = trDiscordSync.getInstance().getDiscordBot();
                 if (bot != null) {
                     bot.sendEslestirmeEmbed(uuid, discordId);
                 }

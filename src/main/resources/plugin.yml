@@ -1,11 +1,10 @@
-name: AgnHesapEsle
-version: 1.2.4
-main: me.agnes.agnesesle.AgnesEsle
+name: trDiscordSync
+version: 1.2.6
+main: me.agnes.trDiscordSync.trDiscordSync
 api-version: 1.13
 softdepend: [PlaceholderAPI, LuckPerms]
-folia-supported: true
 author: Agnes
+description: Discord & Minecraft Account Linking System with Booster Rewards
 permissions:
-  agnesesle.admin:
-    default: opr
-
+  trdiscordsync.admin:
+    default: op

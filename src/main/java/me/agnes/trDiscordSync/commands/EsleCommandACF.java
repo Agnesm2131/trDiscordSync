@@ -1,14 +1,14 @@
-package me.agnes.agnesesle.commands;
+package me.agnes.trDiscordSync.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.annotation.*;
-import me.agnes.agnesesle.AgnesEsle;
-import me.agnes.agnesesle.data.EslestirmeManager;
-import me.agnes.agnesesle.discord.DiscordBot;
-import me.agnes.agnesesle.util.LuckPermsUtil;
-import me.agnes.agnesesle.util.MessageUtil;
-import me.agnes.agnesesle.util.SchedulerUtil;
+import me.agnes.trDiscordSync.trDiscordSync;
+import me.agnes.trDiscordSync.data.EslestirmeManager;
+import me.agnes.trDiscordSync.discord.DiscordBot;
+import me.agnes.trDiscordSync.util.LuckPermsUtil;
+import me.agnes.trDiscordSync.util.MessageUtil;
+import me.agnes.trDiscordSync.util.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @CommandAlias("%main_cmd")
-@Description("AgnHesapEsle ana komutu.")
+@Description("Main trDiscordSync integration command.")
 public class EsleCommandACF extends BaseCommand {
-    private final AgnesEsle plugin;
+    private final trDiscordSync plugin;
 
-    public EsleCommandACF(AgnesEsle plugin) {
+    public EsleCommandACF(trDiscordSync plugin) {
         this.plugin = plugin;
     }
 
@@ -38,7 +38,7 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_esle")
-    @Description("Discord hesabınla eşleşmek için kod üretir.")
+    @Description("Generates a code to link with your Discord account.")
     public void onEsle(Player player) {
         if (EslestirmeManager.beklemeVar(player.getUniqueId())) {
             playError(player);
@@ -62,7 +62,7 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_iptal")
-    @Description("Bekleyen eşleşme kodunu iptal eder.")
+    @Description("Cancels your pending linking code.")
     public void onIptal(Player player) {
         if (!EslestirmeManager.beklemeVar(player.getUniqueId())) {
             playError(player);
@@ -80,7 +80,7 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_onayla")
-    @Description("Discord'dan gelen eşleşme talebini onaylar.")
+    @Description("Confirms the linking request from Discord.")
     public void onOnayla(BukkitCommandIssuer issuer) {
         Player player = issuer.getPlayer();
         if (player == null)
@@ -113,14 +113,14 @@ public class EsleCommandACF extends BaseCommand {
             SchedulerUtil.runAsync(() -> {
                 String discordId = EslestirmeManager.getDiscordId(player.getUniqueId());
                 if (discordId != null) {
-                    DiscordBot bot = AgnesEsle.getInstance().getDiscordBot();
+                    DiscordBot bot = trDiscordSync.getInstance().getDiscordBot();
                     bot.changeNickname(discordId, player.getName());
 
                     LuckPermsUtil lpUtil = plugin.getLuckPermsUtil();
                     if (lpUtil != null) {
                         String group = lpUtil.getPrimaryGroup(player.getUniqueId());
                         if (group != null) {
-                            Map<String, String> rolesMap = AgnesEsle.getInstance().getMainConfig().roles;
+                            Map<String, String> rolesMap = trDiscordSync.getInstance().getMainConfig().roles;
 
                             if (rolesMap != null) {
                                 for (Map.Entry<String, String> entry : rolesMap.entrySet()) {
@@ -145,8 +145,36 @@ public class EsleCommandACF extends BaseCommand {
     }
 
     @SuppressWarnings("unused")
+    @Subcommand("profile")
+    @Description("Displays your own profile or another player's profile.")
+    @Syntax("[oyuncu]")
+    @CommandCompletion("@players")
+    public void onProfil(Player sender, @Optional OfflinePlayer target) {
+        if (target == null) {
+            plugin.getProfileMenu().open(sender, sender);
+            playSuccess(sender);
+            return;
+        }
+
+        if (!sender.hasPermission("trDiscordSync.admin")) {
+            playError(sender);
+            sender.sendMessage(MessageUtil.getMessage("yetki-yok"));
+            return;
+        }
+
+        if (!target.hasPlayedBefore() && !target.isOnline()) {
+            playError(sender);
+            MessageUtil.sendTitle(sender, "oyuncu-bulunamadi");
+            return;
+        }
+
+        plugin.getProfileMenu().open(sender, target);
+        playSuccess(sender);
+    }
+
+    @SuppressWarnings("unused")
     @Subcommand("%sub_kaldir")
-    @Description("Mevcut hesap eşleşmesini kaldırır.")
+    @Description("Removes your existing account link.")
     public void onKaldir(Player player) {
         if (!EslestirmeManager.eslesmeVar(player.getUniqueId())) {
             playError(player);
@@ -160,8 +188,8 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_2fa")
-    @CommandCompletion("aç|kapat")
-    @Description("İki faktörlü kimlik doğrulamayı yönetir.")
+    @CommandCompletion("on|off")
+    @Description("Manages two-factor authentication.")
     public void on2fa(Player player, String durum) {
         if (!EslestirmeManager.eslesmeVar(player.getUniqueId())) {
             playError(player);
@@ -170,7 +198,7 @@ public class EsleCommandACF extends BaseCommand {
         }
 
         durum = durum.toLowerCase();
-        if (durum.equals("aç") || durum.equals("ac")) {
+        if (durum.equals("on") || durum.equals("aç") || durum.equals("ac")) {
             if (EslestirmeManager.isIkiFAOpen(player.getUniqueId())) {
                 player.sendMessage(MessageUtil.getMessage("2fa-already-enabled"));
             } else {
@@ -178,7 +206,7 @@ public class EsleCommandACF extends BaseCommand {
                 player.sendMessage(MessageUtil.getMessage("2fa-successfully-enabled"));
                 playSuccess(player);
             }
-        } else if (durum.equals("kapat") || durum.equals("kapa")) {
+        } else if (durum.equals("off") || durum.equals("kapat") || durum.equals("kapa")) {
             if (!EslestirmeManager.isIkiFAOpen(player.getUniqueId())) {
                 player.sendMessage(MessageUtil.getMessage("2fa-already-disabled"));
             } else {
@@ -194,8 +222,8 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_liste")
-    @CommandPermission("agnesesle.admin")
-    @Description("Eşleşmiş tüm oyuncuları listeler.")
+    @CommandPermission("trDiscordSync.admin")
+    @Description("Lists all linked players.")
     @Syntax("[sayfa]")
     @CommandCompletion("@nothing")
     public void onListe(Player sender, @Default("1") int page) {
@@ -237,8 +265,8 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_sifirla")
-    @CommandPermission("agnesesle.admin")
-    @Description("Bir oyuncunun hesap eşleşmesini sıfırlar.")
+    @CommandPermission("trDiscordSync.admin")
+    @Description("Resets a player's account link.")
     @CommandCompletion("@players")
     public void onSifirla(Player sender, OfflinePlayer target) {
         if (!target.hasPlayedBefore()) {
@@ -261,8 +289,8 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_odul")
-    @CommandPermission("agnesesle.admin")
-    @Description("Bir oyuncuya manuel olarak eşleşme ödülünü verir.")
+    @CommandPermission("trDiscordSync.admin")
+    @Description("Manually gives the linking reward to a player.")
     @CommandCompletion("@players")
     public void onOdul(Player sender, OfflinePlayer target) {
         if (!target.hasPlayedBefore()) {
@@ -283,7 +311,7 @@ public class EsleCommandACF extends BaseCommand {
             return;
         }
 
-        AgnesEsle.getInstance().odulVer(targetUUID);
+        trDiscordSync.getInstance().odulVer(targetUUID);
         EslestirmeManager.odulVerildi(targetUUID);
 
         Map<String, String> vars = new HashMap<>();
@@ -294,8 +322,8 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @Subcommand("%sub_yenile")
-    @CommandPermission("agnesesle.admin")
-    @Description("Konfigürasyon ve dil dosyalarını yeniden yükler.")
+    @CommandPermission("trDiscordSync.admin")
+    @Description("Reloads configurations and language files.")
     public void onYenile(Player sender) {
         MessageUtil.yenile();
         playSuccess(sender);
@@ -305,74 +333,74 @@ public class EsleCommandACF extends BaseCommand {
 
     @SuppressWarnings("unused")
     @HelpCommand
-    @Syntax("[yardım]")
+    @Syntax("[help]")
     public void onHelp(Player sender) {
         sender.sendMessage(MessageUtil.getMessage("help-header"));
 
         sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
             {
-                put("command", "eşle");
+                put("command", "link");
                 put("syntax", "");
-                put("description", "Eşleşme kodu üretir.");
+                put("description", "Generate a linking code.");
             }
         }));
         sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
             {
-                put("command", "onayla");
+                put("command", "confirm");
                 put("syntax", "");
-                put("description", "Eşleşmeyi onaylar.");
+                put("description", "Confirm the linking request.");
             }
         }));
         sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
             {
-                put("command", "iptal");
+                put("command", "cancel");
                 put("syntax", "");
-                put("description", "Bekleyen kodu iptal eder.");
+                put("description", "Cancel your pending code.");
             }
         }));
         sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
             {
-                put("command", "kaldır");
+                put("command", "unlink");
                 put("syntax", "");
-                put("description", "Eşleşmeyi kaldırır.");
+                put("description", "Remove your account link.");
             }
         }));
         sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
             {
                 put("command", "2fa");
-                put("syntax", "<aç|kapat>");
-                put("description", "İki faktörlü doğrulamayı yönetir.");
+                put("syntax", "<on|off>");
+                put("description", "Manage 2FA security.");
             }
         }));
 
-        if (sender.hasPermission("agnesesle.admin")) {
+        if (sender.hasPermission("trDiscordSync.admin")) {
             sender.sendMessage(" ");
             sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
                 {
-                    put("command", "liste");
-                    put("syntax", "[sayfa]");
-                    put("description", "Tüm eşleşmeleri listeler.");
+                    put("command", "list");
+                    put("syntax", "[page]");
+                    put("description", "List all account links.");
                 }
             }));
             sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
                 {
-                    put("command", "sıfırla");
-                    put("syntax", "<oyuncu>");
-                    put("description", "Bir oyuncunun eşleşmesini sıfırlar.");
+                    put("command", "reset");
+                    put("syntax", "<player>");
+                    put("description", "Reset a player's link.");
                 }
             }));
             sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
                 {
-                    put("command", "ödül");
-                    put("syntax", "<oyuncu>");
-                    put("description", "Oyuncuya manuel ödül verir.");
+                    put("command", "reward");
+                    put("syntax", "<player>");
+                    put("description", "Give manual reward.");
                 }
             }));
             sender.sendMessage(MessageUtil.getMessage("help-format", new HashMap<String, String>() {
                 {
-                    put("command", "yenile");
+                    put("command", "reload");
                     put("syntax", "");
-                    put("description", "Eklentiyi yeniden yükler.");
+                    put("description", "Reload the plugin.");
                 }
             }));
         }
